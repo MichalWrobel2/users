@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"goAuthService/models"
 	"goAuthService/utils"
 	"net/http"
@@ -12,7 +11,6 @@ import (
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "HELLO WORLD")
 }
 
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {

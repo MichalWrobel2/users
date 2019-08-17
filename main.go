@@ -1,8 +1,7 @@
 package main
 
 import (
-	// "fmt"
-	// "reflect"
+	"goAuthService/controllers"
 	"goAuthService/models"
 	"goAuthService/utils"
 	"log"
@@ -10,9 +9,6 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-
-	// "goAuthService/models"
-	"goAuthService/controllers"
 )
 
 func main() {
@@ -25,14 +21,14 @@ func setupRouterAndServe() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", controllers.IndexHandler)
 	router.HandleFunc("/users", controllers.CreateUserHandler).Methods("POST")
+	router.HandleFunc("/login", controllers.Login)
 	setupServer(router)
 }
 
 func setupServer(router *mux.Router) {
 	server := &http.Server{
-		Handler: router,
-		Addr:    "127.0.0.1:8000",
-		// Good practice: enforce timeouts for servers you create!
+		Handler:      router,
+		Addr:         "127.0.0.1:8000",
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}

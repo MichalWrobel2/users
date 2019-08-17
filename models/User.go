@@ -4,14 +4,26 @@ import (
 	"fmt"
 	"goAuthService/utils"
 	"regexp"
+	"time"
+
+	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 )
 
+type Base struct {
+	ID        uuid.UUID `json:"uuid" gorm:"type:uuid;primary_key;"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
+}
+
 type User struct {
-	ID        uint64 `json:"id" gorm:"type:bigint(20) unsigned auto_increment;not null;primary_key"`
+	Base
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email     string `json:"email" gorm:"unique"`
 	Password  string
+	//Roles     []string
 }
 
 func (user *User) Get() *User {
@@ -20,9 +32,16 @@ func (user *User) Get() *User {
 	return user
 }
 
+func (base *Base) BeforeCreate(scope *gorm.Scope) error {
+	uuid, err := uuid.NewV4()
+	if err != nil {
+		return err
+	}
+	return scope.SetColumn("ID", uuid)
+}
 func (user *User) Create() {
 	db := utils.GetDB()
-	fmt.Println(db.Find(user))
+	fmt.Println(user)
 	fmt.Println(db.Create(user))
 }
 
