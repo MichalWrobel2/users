@@ -11,7 +11,8 @@ import (
 )
 
 type Base struct {
-	ID        uuid.UUID `json:"uuid" gorm:"type:uuid;primary_key;"`
+	ID        uint64    `json:"id" gorm:"AUTO_INCREMENT"`
+	UUID      uuid.UUID `json:"uuid" gorm:"type:uuid;primary_key"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt *time.Time `sql:"index"`
@@ -37,22 +38,21 @@ func (base *Base) BeforeCreate(scope *gorm.Scope) error {
 	if err != nil {
 		return err
 	}
-	return scope.SetColumn("ID", uuid)
+	return scope.SetColumn("UUID", uuid)
 }
 func (user *User) Create() {
 	db := utils.GetDB()
-	fmt.Println(user)
-	fmt.Println(db.Create(user))
+	db.Create(user)
 }
 
 func (user *User) IsFirstNameValid() bool {
-	fname, _ := regexp.MatchString(".{3,}", user.FirstName)
-	return fname
+	IsFirstNameValid, _ := regexp.MatchString(".{3,}", user.FirstName)
+	return IsFirstNameValid
 }
 
 func (user *User) IsLastNameValid() bool {
-	lname, _ := regexp.MatchString(".{3,}", user.LastName)
-	return lname
+	IsLastNameValid, _ := regexp.MatchString(".{3,}", user.LastName)
+	return IsLastNameValid
 }
 
 func (user *User) IsEmailValid() bool {
