@@ -21,7 +21,7 @@ func setupRouterAndServe() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", controllers.IndexHandler)
 	router.HandleFunc("/users", controllers.CreateUserHandler).Methods("POST")
-	router.HandleFunc("/login", controllers.Login)
+	router.HandleFunc("/login", controllers.LoginHandler).Methods("POST")
 	setupServer(router)
 }
 

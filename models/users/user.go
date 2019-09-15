@@ -1,35 +1,23 @@
-package models
+package users
 
 import (
 	"fmt"
 	"goAuthService/utils"
 	"regexp"
-	"time"
 
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
-type Base struct {
-	ID        uint64    `json:"id" gorm:"AUTO_INCREMENT"`
-	UUID      uuid.UUID `json:"uuid" gorm:"type:uuid;primary_key"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt *time.Time `sql:"index"`
-}
-
-type User struct {
-	Base
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email" gorm:"unique"`
-	Password  string
-	//Roles     []string
-}
-
-func (user *User) Get() *User {
+func GetUserByEmail(email string) *User {
 	db := utils.GetDB()
-	fmt.Println(db.Find(user))
+	user := &User{}
+	err := db.Where("email = ?", email).First(&user).Error
+	if err != nil {
+		fmt.Println("User find error")
+		return nil
+	}
 	return user
 }
 
@@ -43,6 +31,15 @@ func (base *Base) BeforeCreate(scope *gorm.Scope) error {
 func (user *User) Create() {
 	db := utils.GetDB()
 	db.Create(user)
+}
+
+func (credentials *Credentials) AreValid() bool {
+	user := GetUserByEmail(credentials.Email)
+	if user == nil {
+		return false
+	}
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password))
+	return !(err != nil && err == bcrypt.ErrMismatchedHashAndPassword)
 }
 
 func (user *User) IsFirstNameValid() bool {
