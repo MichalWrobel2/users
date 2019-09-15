@@ -6,6 +6,7 @@ import (
 	"goAuthService/utils"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -26,9 +27,10 @@ func setupRouterAndServe() {
 }
 
 func setupServer(router *mux.Router) {
+	address := os.Getenv("HOST")
 	server := &http.Server{
 		Handler:      router,
-		Addr:         "127.0.0.1:8000",
+		Addr:         address,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
